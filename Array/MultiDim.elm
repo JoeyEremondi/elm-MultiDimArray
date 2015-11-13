@@ -74,3 +74,13 @@ initialize dims initFn =
     MD
     { dims = dims
     , arr = Array.initialize arrSize intFn}
+
+
+{-| Get the dimensions of an array -}
+dims : MultiDim a n -> List.Safe Int n
+dims = .dims
+
+
+get : List.Safe int n -> MultiDim a n -> Maybe a
+get mdArr coords =
+  Array.get mdArr.arr <| flattenCoords mdArr.dims coords
