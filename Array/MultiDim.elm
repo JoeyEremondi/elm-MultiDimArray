@@ -1,10 +1,25 @@
 module Array.MultiDim
-  ( MultiDim
+  ( MultiDim, repeat, initialize
+  , inBounds, dims, get, set
+  , toIndexedList, toFlatArray, map, indexedMap
   ) where
 
 {-|
 
-@docs MultiDim
+#The Array type and creation functions
+@docs MultiDim, repeat, initialize
+
+#Get array info
+@docs inBounds, dims
+
+#Access and update
+@docs get, set
+
+#Convting to flat List or Array
+@docs toIndexedList, toFlatArray
+
+#Mapping functions
+@docs map, indexedMap
 -}
 
 import Array exposing (Array)
@@ -39,7 +54,6 @@ and an integer,
 find the corresponding coordinates that flatten
 to that integer
 -}
-
 expandCoords : List.Safe.Safe Int n -> Int -> List.Safe.Safe Int n
 expandCoords dims flatCoord =
   let
@@ -51,10 +65,13 @@ expandCoords dims flatCoord =
     List.Safe.mapl mapFn flatCoord dimensionOffsets
 
 
+{-| Given array dimensions, and coordinates,
+determine if the coordinates are in bounds for the dimensions. -}
 inBounds : List.Safe.Safe Int n -> List.Safe.Safe Int n -> Bool
 inBounds dims coords =
   List.Safe.map2 (,) dims coords
   |> List.Safe.all (\(dim, coord) -> coord >= 0 && coord < dim )
+
 
 {-| Given a SafeList [n1, n2, ...] of array dimensions,
 create an n1 x n2 x ... multi-dimensional array -}
@@ -67,7 +84,9 @@ repeat dims elem =
     { dims = dims
     , arr = Array.repeat arrSize elem}
 
-
+{-| Given a SafeList of array dimensions,
+and a function to generate an element for each coordinate,
+create a new array with the given elements -}
 initialize
   :  List.Safe.Safe Int n
   -> (List.Safe.Safe Int n -> a)
