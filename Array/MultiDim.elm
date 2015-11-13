@@ -115,3 +115,39 @@ set coords elem (MD mdArr as origArr) =
       MD {mdArr | arr <- newArr}
   else
     origArr
+
+
+{-| Generate a list of the array's elements,
+paired with their coordinates.
+ -}
+toIndexedList : MultiDim a n -> List (List.Safe.Safe Int n, a)
+toIndexedList (MD mdArr) =
+  Array.toIndexedList mdArr.arr
+  |> List.map (\(flatIndex, elem) ->
+                (expandCoords mdArr.dims flatIndex, elem ) )
+
+
+{-| Convert this array to a 1-dimensional array
+with elements in lexigraphical order -}
+toFlatArray : MultiDim a n -> Array a
+toFlatArray (MD mdArr) =
+  mdArr.arr
+
+
+{-| Apply a function on every element in an array -}
+map : (a -> b) -> MultiDim a n -> MultiDim b n
+map f (MD mdArr) =
+  MD {mdArr | arr <- Array.map f mdArr.arr}
+
+
+{-| Apply a function on every element in an array,
+with access to the coordinates of each element. -}
+indexedMap
+  : (List.Safe.Safe Int n -> a -> b)
+  -> MultiDim a n
+  -> MultiDim b n
+indexedMap f (MD mdArr) =
+  let
+    flatFn =
+      (expandCoords mdArr.dims) >> f
+  in MD {mdArr | arr <- Array.indexedMap flatFn mdArr.arr}
