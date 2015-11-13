@@ -9,6 +9,7 @@ module Array.MultiDim
 
 import Array exposing (Array)
 import List.Safe
+import Debug
 
 {-| Opaque type for `n`-dimensional arrays containing type `a` -}
 type MultiDim a n =
@@ -50,6 +51,11 @@ expandCoords dims flatCoord =
     List.Safe.mapl mapFn flatCoord dimensionOffsets
 
 
+inBounds : List.Safe.Safe Int n -> List.Safe.Safe Int n -> Bool
+inBounds dims coords =
+  List.Safe.map2 (,) dims coords
+  |> List.Safe.all (\(dim, coord) -> coord >= 0 && coord < dim )
+
 {-| Given a SafeList [n1, n2, ...] of array dimensions,
 create an n1 x n2 x ... multi-dimensional array -}
 repeat : List.Safe.Safe Int n -> a -> MultiDim a n
@@ -77,10 +83,35 @@ initialize dims initFn =
 
 
 {-| Get the dimensions of an array -}
-dims : MultiDim a n -> List.Safe Int n
-dims = .dims
+dims : MultiDim a n -> List.Safe.Safe Int n
+dims (MD arr) = arr.dims
 
 
-get : List.Safe int n -> MultiDim a n -> Maybe a
-get mdArr coords =
-  Array.get mdArr.arr <| flattenCoords mdArr.dims coords
+{-| Return Just the element if all given coordinates
+are within the array's bounds. Otherwise, return nothing. -}
+get : List.Safe.Safe Int n -> MultiDim a n -> Maybe a
+get coords (MD mdArr) =
+  if
+    (inBounds mdArr.dims coords)
+  then
+    case Array.get (flattenCoords mdArr.dims coords) mdArr.arr of
+      Nothing -> Debug.crash "In-bounds check doesn't agree with array dims"
+      x -> x
+  else
+    Nothing
+
+
+{-| Set the element at the given coordinates, if they all
+are within the array's bounds. Otherwise, return the original array. -}
+set : List.Safe.Safe Int n -> a -> MultiDim a n -> MultiDim a n
+set coords elem (MD mdArr as origArr) =
+  if
+    (inBounds mdArr.dims coords)
+  then
+    let
+      flatCoords = flattenCoords mdArr.dims coords
+      newArr = Array.set flatCoords elem mdArr.arr
+    in
+      MD {mdArr | arr <- newArr}
+  else
+    origArr
