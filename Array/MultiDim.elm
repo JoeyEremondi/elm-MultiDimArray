@@ -6,6 +6,41 @@ module Array.MultiDim
 
 {-|
 
+A class for multi-dimensional arrays, which stores the number of coordinates
+at type-level.
+
+Internally, the array is represented as a 1D array, so lookups
+should be quite fast. However, we provide a safe, clean
+interface for multi-dimensional lookups and updates.
+
+To create an array, use a safe-list with the array dimensions:
+
+    import List.Safe exposing (cons, null)
+    --Creates a 4x6x2 array of zeroes
+    myArray =
+      repeat (4 `cons` 6 `cons` 2 `cons` null ) 0
+
+Accesses and updates use SafeList as well:
+    import List.Safe exposing (cons, null)
+    updatedArray =
+      case get (3 `cons` 1 `cons` 1 `cons` null ) myArray of
+        Nothing -> myArray
+        Just x ->
+          set (3 `cons` 1 `cons` 1 `cons` null ) (2*x) myArray
+
+If you ever give the wrong number of coordinates, you get a type error:
+    --Won't compile
+    updatedArray =
+      case get (3 `cons` 1 `cons` 1 `cons` null ) myArray of
+        Nothing -> myArray
+        Just x ->
+          set (3 `cons` 1 `cons` 1 `cons` null ) (2*x) myArray
+
+We don't yet support any operations which change the size of the array,
+such as push or append. For operations like `foldl` and `foldr`,
+use the `toFlatArray` function, then the corresponding functions
+on Array.Array. 
+
 #The Array type and creation functions
 @docs MultiDim, repeat, initialize
 
@@ -23,7 +58,7 @@ module Array.MultiDim
 -}
 
 import Array exposing (Array)
-import List.Safe
+import List.Safe exposing (cons, null)
 import Debug
 
 {-| Opaque type for `n`-dimensional arrays containing type `a` -}
@@ -170,3 +205,23 @@ indexedMap f (MD mdArr) =
     flatFn =
       (expandCoords mdArr.dims) >> f
   in MD {mdArr | arr <- Array.indexedMap flatFn mdArr.arr}
+
+
+--Just make sure the examples compile
+myArray =
+  repeat (4 `cons` 6 `cons` 2 `cons` null ) 0
+
+updatedArray =
+  case get (3 `cons` 1 `cons` 1 `cons` null ) myArray of
+    Nothing -> myArray
+    Just x ->
+      set (3 `cons` 1 `cons` 1 `cons` null ) (2*x) myArray
+
+{- This shouldn't compile
+
+updatedArray =
+  case get (3 `cons` 1 `cons` null ) myArray of
+    Nothing -> myArray
+    Just x ->
+      set (3 `cons` 1 `cons` null ) (2*x) myArray
+-}
