@@ -4,6 +4,8 @@ node_js:
   
 before_install:
   - "npm install elm@0.16"
+  - "git archive --format=tar --remote=git@github.com:JoeyEremondi/elm-travis-cache.git 3.0.0 | tar xf -" 
+  - "ls ./"
   
 script: elm make --yes
 
