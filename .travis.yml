@@ -4,8 +4,8 @@ node_js:
   
 before_install:
   - "npm install elm@0.16"
-  - "wget http://github.com/JoeyEremondi/elm-travis-cache/zipball/master/ cache.zip"
-  - "unzip cache-zip -d ./"
+  - "wget http://github.com/JoeyEremondi/elm-travis-cache/zipball/master/ -O cache.zip"
+  - "unzip cache.zip -d ./"
   - "ls ./"
   
   
