@@ -1,5 +1,5 @@
 {
-    "version": "2.0.1",
+    "version": "2.0.2",
     "summary": "Type-safe interface for multi-dimensional, immutable arrays",
     "repository": "https://github.com/JoeyEremondi/elm-MultiDimArray.git",
     "license": "BSD3",
