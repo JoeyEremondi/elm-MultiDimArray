@@ -1,12 +1,14 @@
 {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "summary": "Type-safe interface for multi-dimensional, immutable arrays",
     "repository": "https://github.com/JoeyEremondi/elm-MultiDimArray.git",
     "license": "BSD3",
     "source-directories": [
         "."
     ],
-    "exposed-modules": ["Array.MultiDim"],
+    "exposed-modules": [
+        "Array.MultiDim"
+    ],
     "dependencies": {
         "JoeyEremondi/elm-SafeLists": "2.0.0 <= v < 3.0.0",
         "elm-lang/core": "2.1.0 <= v < 3.0.0"

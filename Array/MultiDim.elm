@@ -21,6 +21,7 @@ To create an array, use a safe-list with the array dimensions:
       repeat (4 `cons` 6 `cons` 2 `cons` null ) 0
 
 Accesses and updates use SafeList as well:
+
     import List.SafeList exposing (cons, null)
     updatedArray =
       case get (3 `cons` 1 `cons` 1 `cons` null ) myArray of
@@ -29,6 +30,7 @@ Accesses and updates use SafeList as well:
           set (3 `cons` 1 `cons` 1 `cons` null ) (2*x) myArray
 
 If you ever give the wrong number of coordinates, you get a type error:
+
     --Won't compile
     updatedArray =
       case get (3 `cons` 1 `cons` 1 `cons` null ) myArray of
