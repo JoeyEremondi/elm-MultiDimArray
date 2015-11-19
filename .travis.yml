@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+  
+before_install:
+  - "npm install elm@0.15.1"
+  
+script: elm make --yes
+
